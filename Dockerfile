@@ -1,5 +1,5 @@
-# [关键修改 1] 使用最新的官方非 VNC 镜像 (这个标签是稳定的)
-FROM mcr.microsoft.com/playwright/python:v1.55.1-jammy
+# [关键修改 1] 使用更简洁的标签：版本号 (无v, 无-jammy)
+FROM mcr.microsoft.com/playwright/python:1.55.1
 
 # 设置环境变量
 ENV PYTHONDONTWRITEBYTECODE=1 \
