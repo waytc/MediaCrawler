@@ -1,5 +1,5 @@
-# [修改这里] 使用带 VNC 的 Playwright 镜像，版本依然匹配 1.45.0
-FROM mcr.microsoft.com/playwright/python-vnc:v1.45.0-jammy
+# [关键修改 1] 使用一个已知的、较新的 VNC 镜像
+FROM mcr.microsoft.com/playwright/python-vnc:v1.55.1-jammy
 
 # 下面的内容保持不变
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -14,10 +14,19 @@ RUN apt-get update && apt-get install -y curl \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+# 复制并安装 Python 依赖
 COPY requirements.txt .
+# [关键修改 2] 强制安装 Playwright 1.45.0 (如果你的 requirements.txt 中未指定)
+# 确保 Playwright Python 库版本与项目代码兼容 (1.45.0)
 RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+    pip install --no-cache-dir -r requirements.txt && \
+    pip install playwright==1.45.0 --no-deps
 
+# 复制 VNC 启动脚本并赋予权限 (vnc_entrypoint.sh)
+COPY vnc_entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/vnc_entrypoint.sh
+
+# 复制项目代码
 COPY . .
 
 VOLUME ["/app/data", "/app/config"]
