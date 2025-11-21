@@ -1,5 +1,5 @@
-# [修改这里] 将版本从 v1.49.1 改为 v1.45.0-jammy
-FROM mcr.microsoft.com/playwright/python:v1.45.0-jammy
+# [修改这里] 使用带 VNC 的 Playwright 镜像，版本依然匹配 1.45.0
+FROM mcr.microsoft.com/playwright/python-vnc:v1.45.0-jammy
 
 # 下面的内容保持不变
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -22,5 +22,9 @@ COPY . .
 
 VOLUME ["/app/data", "/app/config"]
 
-ENTRYPOINT ["python", "main.py"]
-CMD ["--help"]
+# [关键修改 1] ENTRYPOINT 指向 VNC 启动脚本
+ENTRYPOINT ["/usr/local/bin/vnc_entrypoint.sh"]
+
+# [关键修改 2] CMD 设置默认程序，但允许外部覆盖
+# 这样，如果你不传参数，它就显示帮助。
+CMD ["python", "main.py", "--help"]
