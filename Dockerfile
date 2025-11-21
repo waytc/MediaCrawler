@@ -5,7 +5,8 @@ FROM mcr.microsoft.com/playwright/python:v1.45.0-jammy
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     DISPLAY=:99 \
-    VNC_PASSWD=seh
+    VNC_PASSWD=seh \
+    DEBIAN_FRONTEND=noninteractive  # <-- **新增这行**
 
 WORKDIR /app
 
