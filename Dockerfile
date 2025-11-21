@@ -6,7 +6,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     DISPLAY=:99 \
     VNC_PASSWD=seh \
-    DEBIAN_FRONTEND=noninteractive  # <-- **新增这行**
+    DEBIAN_FRONTEND=noninteractive
 
 WORKDIR /app
 
