@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  # ---------------------------
+  # 1. 爬虫核心服务
+  # ---------------------------
+  crawler:
+    build: .
+    container_name: media_crawler
+    # 将宿主机的 config 和 data 目录挂载进去，保证配置可改，数据不丢
+    volumes:
+      - ./config:/app/config
+      - ./data:/app/data
+    depends_on:
+      - mysql_db
+      - redis_db
+    # 这里是关键：通过环境变量覆盖 db_config.py 中的默认值
+    environment:
+      # MySQL 配置
+      - MYSQL_DB_HOST=mysql_db       # 对应下面定义的 service 名字
+      - MYSQL_DB_PORT=3306
+      - MYSQL_DB_USER=root
+      - MYSQL_DB_PWD=123456 # 请设置强密码
+      - MYSQL_DB_NAME=media_crawler
+      
+    
+      # 告诉 Playwright 浏览器安装位置 (对应 Dockerfile)
+      - PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+    
+    # 保持容器运行，方便进入容器执行命令 (可选)
+    # command: tail -f /dev/null
+
+  # ---------------------------
+  # 2. MySQL 数据库服务
+  # ---------------------------
+  mysql_db:
+    image: mysql:8.0
+    container_name: crawler_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456               # 必须与上面 crawler 中的配置一致
+      MYSQL_DATABASE: media_crawler             # 自动创建数据库
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3306:3306" # 暴露给宿主机，方便你用 Navicat/DBeaver 连接查看数据
+
+# 数据卷持久化
+volumes:
+  db_data:
