@@ -1,5 +1,5 @@
 # [关键修改 1] 使用更简洁的标签：版本号 (无v, 无-jammy)
-FROM mcr.microsoft.com/playwright/python:1.55.1
+FROM mcr.microsoft.com/playwright/python:1.55
 
 # 设置环境变量
 ENV PYTHONDONTWRITEBYTECODE=1 \
