@@ -1,5 +1,5 @@
-# [关键修改 1] 使用一个已知的、较新的 VNC 镜像
-FROM mcr.microsoft.com/playwright/python-vnc:v1.55.1-jammy
+# [关键修改 1] 使用最新的 VNC 镜像标签
+FROM mcr.microsoft.com/playwright/python-vnc:latest
 
 # 下面的内容保持不变
 ENV PYTHONDONTWRITEBYTECODE=1 \
