@@ -1,14 +1,17 @@
-# [关键修改 1] 使用最新的 VNC 镜像标签
-FROM mcr.microsoft.com/playwright/python-vnc:latest
+# [关键修改 1] 使用最新的官方非 VNC 镜像 (这个标签是稳定的)
+FROM mcr.microsoft.com/playwright/python:v1.55.1-jammy
 
-# 下面的内容保持不变
+# 设置环境变量
 ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
+    PYTHONUNBUFFERED=1 \
+    DISPLAY=:99 \
+    VNC_PASSWD=seh
 
 WORKDIR /app
 
-# 安装 Node.js 20
-RUN apt-get update && apt-get install -y curl \
+# [关键修改 2] 安装 VNC、NoVNC 所需依赖（x11vnc, websockify, Node.js）
+# 注意：我们保留了 Node.js 20 的安装，并添加了 VNC 依赖
+RUN apt-get update && apt-get install -y curl x11vnc websockify \
     && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs \
     && apt-get clean \
