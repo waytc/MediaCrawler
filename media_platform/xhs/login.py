@@ -55,6 +55,12 @@ class XiaoHongShuLogin(AbstractLogin):
             retry decorator will retry 20 times if the return value is False, and the retry interval is 1 second
             if max retry times reached, raise RetryError
         """
+        # [新增] 防止页面正在跳转时获取内容导致报错
+        try:
+            # 等待 DOM 加载完成，超时时间设为 2秒，防止阻塞重试循环
+            await self.context_page.wait_for_load_state("domcontentloaded", timeout=2000)
+        except Exception:
+            pass # 如果超时忽略，继续执行
 
         if "请通过验证" in await self.context_page.content():
             utils.logger.info("[XiaoHongShuLogin.check_login_state] 登录过程中出现验证码，请手动验证")
@@ -188,7 +194,7 @@ class XiaoHongShuLogin(AbstractLogin):
             utils.logger.info("[XiaoHongShuLogin.login_by_qrcode] Login xiaohongshu failed by qrcode login method ...")
             sys.exit()
 
-        wait_redirect_seconds = 5
+        wait_redirect_seconds = 20
         utils.logger.info(f"[XiaoHongShuLogin.login_by_qrcode] Login successful then wait for {wait_redirect_seconds} seconds redirect ...")
         await asyncio.sleep(wait_redirect_seconds)
 
